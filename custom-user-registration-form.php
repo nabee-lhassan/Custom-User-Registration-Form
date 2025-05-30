@@ -1,55 +1,72 @@
 <?php
 /*
 Plugin Name: Custom User Registration Form
-Description: A simple WordPress plugin to display a custom registration form via shortcode. Use [custom_user_registration_form].
+Description: A simple WordPress plugin to display a custom registration form via shortcode. Use shortcode For Resiter Form [custom_user_registration_form] Use shortcode For Login Form [custom_login_form] .
 Version: 1.0
 Author: Nabeel Hassan
 */
 
-// Register the shortcode
-function custom_user_registration_form_shortcode() {
-    ob_start();
+
+
+// for check login status
+
+
+add_action('wp_footer', 'custom_check_user_login_status');
+function custom_check_user_login_status() {
     ?>
-    <form method="post">
-        <?php wp_nonce_field('custom_user_registration_action', 'custom_user_registration_nonce'); ?>
-        <input type="text" name="custom_username" placeholder="Username" required />
-        <input type="email" name="custom_email" placeholder="Email" required />
-        <input type="password" name="custom_password" placeholder="Password" required />
-        <input type="submit" name="custom_user_register" value="Register" />
-    </form>
+    <script>
+        var isUserLoggedIn = <?php echo is_user_logged_in() ? 'true' : 'false'; ?>;
+        var registerUrl = "<?php echo home_url('/register'); ?>";
+        
+
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!isUserLoggedIn) {
+                const myAccountLink = document.querySelector(".My-account a");
+                if (myAccountLink) {
+                    myAccountLink.textContent = "Register/Login";
+                    myAccountLink.href = registerUrl;
+                }
+
+               
+            }
+        });
+    </script>
     <?php
-    return ob_get_clean();
 }
-add_shortcode('custom_user_registration_form', 'custom_user_registration_form_shortcode');
 
-// Handle form submission
-function handle_custom_user_registration() {
-    if (
-        isset($_POST['custom_user_register']) &&
-        isset($_POST['custom_user_registration_nonce']) &&
-        wp_verify_nonce($_POST['custom_user_registration_nonce'], 'custom_user_registration_action')
-    ) {
-        $username = sanitize_user($_POST['custom_username']);
-        $email = sanitize_email($_POST['custom_email']);
-        $password = $_POST['custom_password'];
 
-        if ( username_exists($username) || email_exists($email) ) {
-            echo "<p style='color:red;'>Username or Email already exists!</p>";
-            return;
-        }
+// login user away from register page
 
-        $user_id = wp_create_user($username, $password, $email);
-        if ( !is_wp_error($user_id) ) {
-            wp_set_current_user($user_id);
-            wp_set_auth_cookie($user_id);
-            wp_redirect(home_url('/welcome/'));
-            exit;
-        } else {
-            echo "<p style='color:red;'>" . $user_id->get_error_message() . "</p>";
-        }
+add_action('template_redirect', 'redirect_logged_in_user_from_register');
+
+function redirect_logged_in_user_from_register() {
+    if (is_user_logged_in() && is_page('register')) {
+        wp_redirect(home_url('/my-account/'));
+        exit;
     }
 }
-add_action('init', 'handle_custom_user_registration');
+
+
+// redirect after logout
+
+add_action('wp_logout', 'custom_redirect_after_logout');
+function custom_redirect_after_logout() {
+    wp_redirect(home_url('/register'));
+    exit;
+}
+
+
+// Register form
+
+require_once plugin_dir_path(__FILE__) . 'includes/register-form.php';
+
+// login form 
+
+require_once plugin_dir_path(__FILE__) . 'includes/login-form.php';
+
+
+
+
 
 
 
@@ -65,3 +82,7 @@ function enqueue_custom_user_registration_assets() {
     wp_enqueue_script('custom-user-registration-script', $plugin_url . 'js/script.js', array(), null, true);
 }
 add_action('wp_enqueue_scripts', 'enqueue_custom_user_registration_assets');
+
+
+
+

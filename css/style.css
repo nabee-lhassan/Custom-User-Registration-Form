@@ -1,0 +1,44 @@
+.custom-registration-form {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  font-family: inherit;
+}
+
+.custom-registration-form input[type="text"],
+.custom-registration-form input[type="email"],
+.custom-registration-form input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+  font-size: 16px;
+}
+
+.custom-registration-form input[type="text"]:focus,
+.custom-registration-form input[type="email"]:focus,
+.custom-registration-form input[type="password"]:focus {
+  border-color: #913f18; /* fallback for themes without this var */
+  outline: none;
+}
+
+.custom-registration-form input[type="submit"] {
+  background-color: #913f18; /* Primary theme color */
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.custom-registration-form input[type="submit"]:hover {
+  background-color: var(--e-global-color-accent-hover, #913f18); /* Use hover variant if available */
+}
