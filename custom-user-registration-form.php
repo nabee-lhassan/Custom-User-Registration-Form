@@ -1,8 +1,7 @@
 <?php
 /*
 Plugin Name: Custom User Registration Form
-Description: A simple WordPress plugin to display a custom registration form via shortcode Register Shortcode [custom_user_registration_form]
-.
+Description: A simple WordPress plugin to display a custom registration form via shortcode. Use [custom_user_registration_form].
 Version: 1.0
 Author: Nabeel Hassan
 */
